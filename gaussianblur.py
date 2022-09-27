@@ -10,7 +10,6 @@ def grayscale(img):
 	
 def blur(img):
 	output = np.zeros_like(img)
-	#img = cv2.copyMakeBorder(img,1,1,1,1,cv2.BORDER_WRAP) #Handle edge cases (wrap around)
 	gaussiankernel = np.array([
 		[1,2,1],
 		[2,4,2],
@@ -34,7 +33,6 @@ def blur(img):
 	cv2.imwrite('2dblurred.jpg',output)
 
 def sepblur(img):
-	#img = cv2.transpose(img)
 	output = np.zeros_like(img)
 	output2 = np.zeros_like(img)
 	kernelc = np.array([[1],[2],[1]])/4
@@ -53,22 +51,29 @@ def sepblur(img):
 			for kr in range(3):
 				jj = r - kr
 				if jj>=0 and jj < rows:
-					#output[r][c] += kernelr[kr] * img[jj][c]
 					output2[r][c] += kernelr[kr] * output[jj][c]
 
 	cv2.imwrite('sepblurred.jpg',output2)
+
+def speedtest(func,img):
+	sum = 0 														#to hold the sum
+	for i in range(5): 												#convolve 5 times
+		start_time = time.time()									#get starting time
+		func(img) 													#separable/non-separable convolution
+		sum += round(time.time() - start_time,3) 					#subtract current time from starting time
+		print(f"Trial {i+1}: {round(time.time() - start_time,3)}")  #output after each convolution
+	return sum/5 													#return the average
 
 def start():
 	imgpath = 'nztowerds.jpg'
 	grayimg = grayscale(cv2.imread(imgpath))
 	#blur(grayimg)
-	sepblur(grayimg)
+	#sepblur(grayimg)
 	#cv2.imwrite('opencvblurred.jpg',cv2.GaussianBlur(grayimg,(3,3),0))
+	print(f"average time in seconds (5 trials):  {speedtest(sepblur,grayimg)} seconds")
 	
 if __name__ == "__main__":
-	start_time = time.time()
 	start()
-	print(f"time in seconds:  {round(time.time() - start_time,3)} seconds")
 
 
 
