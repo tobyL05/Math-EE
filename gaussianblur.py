@@ -55,6 +55,9 @@ def sepblur(img):
 
 	cv2.imwrite('sepblurred.jpg',output2)
 
+def opencvgaussian(img):
+	cv2.imwrite('opencvgaussian.jpg',cv2.GaussianBlur(img, (3,3),0))
+
 def speedtest(func,img):
 	sum = 0 														#to hold the sum
 	for i in range(5): 												#convolve 5 times
@@ -70,7 +73,7 @@ def start():
 	#blur(grayimg)
 	#sepblur(grayimg)
 	#cv2.imwrite('opencvblurred.jpg',cv2.GaussianBlur(grayimg,(3,3),0))
-	print(f"average time in seconds (5 trials):  {speedtest(sepblur,grayimg)} seconds")
+	print(f"average time in seconds (5 trials):  {speedtest(opencvgaussian,grayimg)} seconds")
 	
 if __name__ == "__main__":
 	start()
