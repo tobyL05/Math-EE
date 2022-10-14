@@ -12,9 +12,14 @@ def getgraypixel(img):
 		print(f"Pixel at ({i}, 0): {img[i][0]}")
 	cv2.imwrite('nztowergray.jpg',img)
 
-def start():
-	imgpath = "nztowerds.jpg"
-	img = cv2.imread(imgpath)
+def getimgmatrix(img):
+	img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+	matr = np.array(img)
+	#for i in range(50):
+		#for j in range(50):
+	return matr
+
+def getpixelinfos(img):
 	print("Original image")
 	getcolorpixel(img)
 
@@ -22,6 +27,11 @@ def start():
 	
 	print("Grayscaled image")
 	getgraypixel(img)
+
+def start():
+	imgpath = "nztowerds.jpg"
+	img = cv2.imread(imgpath)
+	#print(getimgmatrix(img))
 
 if __name__ == "__main__":
 	start()
