@@ -1,4 +1,3 @@
-from re import M
 import time
 import numpy as np
 import cv2
@@ -59,12 +58,18 @@ def sepblur(img):
 	return output2
 
 def cv2prewitt(img):
+	output = np.zeros_like(img)
 	kernelx = np.array([[1,1,1],[0,0,0],[-1,-1,-1]])
 	kernely = np.array([[-1,0,1],[-1,0,1],[-1,0,1]])
 	img_prewittx = cv2.filter2D(img, -1, kernelx)
 	img_prewitty = cv2.filter2D(img, -1, kernely)
-	cv2.imwrite('opencv2prewittx.jpg',img_prewittx)
-	cv2.imwrite('opencv2prewitty.jpg',img_prewitty)
+	#cv2.imwrite('opencv2prewittx.jpg',img_prewittx)
+	#cv2.imwrite('opencv2prewitty.jpg',img_prewitty)
+	for r in range(img.shape[0]):
+		for c in range(img.shape[1]):
+			output[r][c] = np.sqrt(pow(img_prewittx[r][c],2) + pow(img_prewitty[r][c],2))
+
+	cv2.imwrite('cv2prewitt.jpg',output)
 
 def prewitt(gray_img):
 	output = np.zeros_like(gray_img)
@@ -101,11 +106,13 @@ def prewitt(gray_img):
                 #(vertical[2, 1] * gray_img[i + 1, j]) + \
                 #(vertical[2, 2] * gray_img[i + 1, j + 1])
 
-    			# Edge Magnitude
+    		# Edge Magnitude
 			mag = np.sqrt(pow(hori, 2.0) + pow(vert, 2.0))
 			output[i - 1, j - 1] = mag
 
 	cv2.imwrite('prewitt.jpg',output)
+	#cv2.imshow('prewitt',output)
+	#cv2.waitKey(0)
 
 
 def sepprewitt(img):
@@ -116,7 +123,7 @@ def sepprewitt(img):
 	out = np.zeros_like(img)
 	boxc = np.array([[1],[1],[1]])/3
 	prewr = np.array([1,0,-1])
-	boxr = np.array([1,1,1])
+	boxr = np.array([1,1,1])/3
 	prewc = np.array([[1],[0],[-1]])
 	rows = img.shape[0]
 	cols = img.shape[1]
@@ -168,6 +175,8 @@ def sepprewitt(img):
 
 	cv2.imwrite('sep_prewitt.jpg',out)
 	#cv2.imwrite('prewittadd.jpg',hori + vert)
+	#cv2.imshow('sep prewitt',out)
+	#cv2.waitKey(0)
 
 def opencvgaussian(img):
 	cv2.imwrite('opencvgaussian.jpg',cv2.GaussianBlur(img, (3,3),0))
@@ -186,8 +195,8 @@ def start():
 	grayimg = grayscale(cv2.imread(imgpath))
 	#img = blur(grayimg)
 	img = sepblur(grayimg)
-	#prewitt(img)
-	sepprewitt(grayimg)
+	prewitt(img)
+	#sepprewitt(img)
 	#cv2prewitt(img)
 	#cv2.imwrite('opencvblurred.jpg',cv2.GaussianBlur(grayimg,(3,3),0))
 	#print(f"average time in seconds (5 trials):  {speedtest(opencvgaussian,grayimg)} seconds")
