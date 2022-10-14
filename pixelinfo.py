@@ -15,6 +15,9 @@ def getgraypixel(img):
 def getimgmatrix(img):
 	img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 	matr = np.array(img)
+	matr.astype(int)
+	np.set_printoptions(suppress=True)
+	np.savetxt("imagematrix.txt",matr,fmt='%-3d')
 	#for i in range(50):
 		#for j in range(50):
 	return matr
@@ -31,7 +34,7 @@ def getpixelinfos(img):
 def start():
 	imgpath = "nztowerds.jpg"
 	img = cv2.imread(imgpath)
-	#print(getimgmatrix(img))
+	print(getimgmatrix(img))
 
 if __name__ == "__main__":
 	start()
