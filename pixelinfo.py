@@ -17,7 +17,7 @@ def getimgmatrix(img):
 	matr = np.array(img)
 	matr.astype(int)
 	np.set_printoptions(suppress=True)
-	np.savetxt("imagematrix.txt",matr,fmt='%-3d')
+	#np.savetxt("imagematrix.txt",matr,fmt='%-3d')
 	#for i in range(50):
 		#for j in range(50):
 	return matr
@@ -32,7 +32,7 @@ def getpixelinfos(img):
 	getgraypixel(img)
 
 def start():
-	imgpath = "nztowerds.jpg"
+	imgpath = "opencvgaussian.jpg"
 	img = cv2.imread(imgpath)
 	print(getimgmatrix(img))
 
