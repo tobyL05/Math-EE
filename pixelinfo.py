@@ -32,7 +32,7 @@ def getpixelinfos(img):
 	getgraypixel(img)
 
 def start():
-	imgpath = "nztowerds.jpg"
+	imgpath = "sepblurred.jpg"
 	img = cv2.imread(imgpath)
 	print(getimgmatrix(img))
 
