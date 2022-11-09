@@ -214,7 +214,7 @@ def cannyPerformance(func):
 	print(f"Completion time: {round(time.time() - start_time,3)}")
 
 def canny():
-	imgpath = 'nztowerds.jpg' #original
+	imgpath = 'nztowerORI.jpg' #original
 	#imgpath = 'mount.JPG'
 	print("Grayscaling...")
 	grayimg = grayscale(cv2.imread(imgpath)) #grayscale
@@ -233,20 +233,13 @@ def canny():
 def cv2Canny():
 	imgpath = 'nztowerORI.jpg'
 	img = cv2.imread(imgpath)
-	edges = cv2.Canny(img,50,100)
+	edges = cv2.Canny(img,50,125)
 	cv2.imwrite("cv2Canny.jpg",edges)
 
 def start():
-	#cv2Canny()
-	#img = cv2.cvtColor(cv2.imread(imgpath),cv2.COLOR_BGR2GRAY)
-	canny()
 	#cannyPerformance(canny())
-	#imgpath = 'sobelNMS.jpg'
-	#img = cv2.imread(imgpath)
-	#img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-	#thresh = doublethresh(img)
-	#hysteresis(thresh)
-	
+	cv2Canny()
+
 if __name__ == "__main__":
 	start()
 
