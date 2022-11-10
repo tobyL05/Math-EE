@@ -1,4 +1,4 @@
-import math
+import cProfile
 import time
 import numpy as np
 import cv2
@@ -30,7 +30,7 @@ def blur(img):
 					jj = c + (2-nn)
 					if ii>=0 and ii < rows and jj >=0 and jj < cols:
 						output[r][c] += img[ii][jj] * gaussiankernel[mm][nn]
-	cv2.imwrite('2dblurred.jpg',output)
+	#cv2.imwrite('2dblurred.jpg',output)
 	return output
 
 def sepblur(img):
@@ -56,20 +56,6 @@ def sepblur(img):
 
 	#cv2.imwrite('sepblurred.jpg',output2)
 	return output2
-
-def cv2prewitt(img):
-	output = np.zeros_like(img)
-	kernelx = np.array([[1,1,1],[0,0,0],[-1,-1,-1]])
-	kernely = np.array([[-1,0,1],[-1,0,1],[-1,0,1]])
-	img_prewittx = cv2.filter2D(img, -1, kernelx)
-	img_prewitty = cv2.filter2D(img, -1, kernely)
-	#cv2.imwrite('opencv2prewittx.jpg',img_prewittx)
-	#cv2.imwrite('opencv2prewitty.jpg',img_prewitty)
-	for r in range(img.shape[0]):
-		for c in range(img.shape[1]):
-			output[r][c] = np.sqrt(pow(img_prewittx[r][c],2) + pow(img_prewitty[r][c],2))
-
-	cv2.imwrite('cv2prewitt.jpg',output)
 
 def sobel(gray_img):
 	output = np.zeros_like(gray_img)
@@ -97,7 +83,7 @@ def sobel(gray_img):
 				#if mag > 100:
 					#output[i-1,j-1] = mag
 
-	cv2.imwrite('sobel.jpg',output)
+	#cv2.imwrite('sobel.jpg',output)
 	return (output,angles)
 
 def nms(img,angles):
@@ -134,7 +120,7 @@ def nms(img,angles):
 					#img[i-1,j-1] = 0
 	
 	
-	cv2.imwrite('sobelNMS.jpg',nmsimg)
+	#cv2.imwrite('sobelNMS.jpg',nmsimg)
 	return nmsimg
 
 def doublethresh(img):
@@ -151,7 +137,7 @@ def doublethresh(img):
 				thresholded[i-1,j-1] = 150
 			else:
 				thresholded[i-1,j-1] = 255
-	cv2.imwrite('thresholded.jpg',thresholded)
+	#jcv2.imwrite('thresholded.jpg',thresholded)
 	return thresholded
 
 def hysteresis(img):
@@ -178,9 +164,6 @@ def hysteresis(img):
 			botl = img[i-2,j-2]
 			botm = img[i-2,j-1]
 			neighbors =[topr,topl,topm,l,r,botr,botl,botm]
-			#print(img[i-1,j-1])
-			#print(neighbors)
-			found = False
 			if img[i-1,j-1] == 150:
 				if any(n >= 125 for n in neighbors):
 					strong[i-1,j-1] = 255
@@ -191,7 +174,7 @@ def hysteresis(img):
 			elif img[i-1,j-1] == 255:
 				strong[i-1,j-1] = 255
 
-	cv2.imwrite('final.jpg',strong)
+	#cv2.imwrite('final.jpg',strong)
 
 def opencvgaussian(img):
 	return cv2.GaussianBlur(img, (5,5),0)
@@ -207,38 +190,54 @@ def speedtest(func,img):
 		print(f"Trial {i+1}: {round(time.time() - start_time,3)}")  #output after each convolution
 	return sum/5 													#return the average
 
+def cannyspeedtest(func):
+	time = 0
+	sum = 0 														#to hold the sum
+	for i in range(5): 												#convolve 5 times
+		time += cannyPerformance(func)
+		sum += time
+		print(f"Trial {i+1} completion time: {time}")  #output after each convolution
+	print(f"Average completion time (5 trials): {sum/5}")
+	#return sum/5 													#return the average
+
 def cannyPerformance(func):
 	start_time = time.time()
 	func()
-
-	print(f"Completion time: {round(time.time() - start_time,3)}")
+	return round(time.time() - start_time,3) 
 
 def canny():
-	imgpath = 'nztowerORI.jpg' #original
+	imgpath = 'nztowerds.jpg' #original
 	#imgpath = 'mount.JPG'
-	print("Grayscaling...")
+
+	#print("Grayscaling...")
 	grayimg = grayscale(cv2.imread(imgpath)) #grayscale
-	print("Blurring...")
+
+	#print("Blurring...")
 	img = sepblur(grayimg) #blur
 	#img = opencvgaussian(grayimg) #much faster
-	print("Getting gradient magnitude and direction...")
+
+	#print("Getting gradient magnitude and direction...")
 	grad = sobel(img) #grad magnitude and dir
-	print("NMS...")
+
+	#print("NMS...")
 	nmsimg = nms(grad[0],grad[1]) #nms
-	print("Thresholding...")
+
+	#print("Thresholding...")
 	thresh = doublethresh(nmsimg) #double thresholding
-	print("Hysteresis...")
+
+	#print("Hysteresis...")
 	hysteresis(thresh) #hysteresis
 
 def cv2Canny():
-	imgpath = 'nztowerORI.jpg'
+	imgpath = 'nztowerds.jpg'
 	img = cv2.imread(imgpath)
 	edges = cv2.Canny(img,50,125)
-	cv2.imwrite("cv2Canny.jpg",edges)
+	#cv2.imwrite("cv2CannyDS.jpg",edges)
 
 def start():
-	#cannyPerformance(canny())
-	cv2Canny()
+	cannyspeedtest(canny)
+	#cProfile.run('canny()')
+	#cv2Canny()
 
 if __name__ == "__main__":
 	start()
