@@ -60,6 +60,8 @@ def sepblur(img):
 def sobel(gray_img):
 	output = np.zeros_like(gray_img)
 	angles = np.zeros_like(gray_img)
+	horiimg = np.zeros_like(gray_img)
+	vertimg = np.zeros_like(gray_img)
 	horizontal = np.array([[-1,0,1],[-2,0,2],[-1,0,1]])
 	vertical = np.array([[-1,-2,-1],[0,0,0],[1,2,1]])
 	rows = gray_img.shape[0]
@@ -71,11 +73,15 @@ def sobel(gray_img):
 				for kc in range(3):
 					hori += horizontal[kr][kc] * gray_img[i-kr][j-kc]
 					vert += vertical[kr][kc] * gray_img[i-kr][j-kc]
+			horiimg[i-1,j-1] = hori
+			vertimg[i-1,j-1] = vert
 			angle = np.rad2deg(np.arctan2(vert,hori))
 			if angle < 0: 
 				angle += 180
 			angles[i-1,j-1] = angle
 			output[i-1,j-1] = np.sqrt(np.square(hori) + np.square(vert))
+	cv2.imwrite('sobelX.jpg',horiimg)
+	cv2.imwrite('sobelY.jpg',vertimg)
 
     		# Edge Magnitude
 			#mag = np.sqrt(pow(hori, 2.0) + pow(vert, 2.0))
@@ -234,8 +240,16 @@ def cv2Canny():
 	edges = cv2.Canny(img,50,125)
 	#cv2.imwrite("cv2CannyDS.jpg",edges)
 
+def sobeldet():
+	imgpath = 'nztowerds.jpg'
+	img = cv2.imread(imgpath)
+	img = sepblur(grayscale(img))
+	edges = sobel(img)[0]
+	#cv2.imwrite("exout.png",edges)
+
 def start():
-	cannyspeedtest(canny)
+	sobeldet()
+	#cannyspeedtest(canny)
 	#cProfile.run('canny()')
 	#cv2Canny()
 
