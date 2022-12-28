@@ -73,21 +73,8 @@ def sobel(gray_img):
 				for kc in range(3):
 					hori += horizontal[kr][kc] * gray_img[i-kr][j-kc]
 					vert += vertical[kr][kc] * gray_img[i-kr][j-kc]
-			horiimg[i-1,j-1] = hori
-			vertimg[i-1,j-1] = vert
-			angle = np.rad2deg(np.arctan2(vert,hori))
-			if angle < 0: 
-				angle += 180
-			angles[i-1,j-1] = angle
+			angles[i-1,j-1] = np.rad2deg(np.arctan2(vert,hori))
 			output[i-1,j-1] = np.sqrt(np.square(hori) + np.square(vert))
-	cv2.imwrite('sobelX.jpg',horiimg)
-	cv2.imwrite('sobelY.jpg',vertimg)
-
-    		# Edge Magnitude
-			#mag = np.sqrt(pow(hori, 2.0) + pow(vert, 2.0))
-			#output[i-1,j-1] = mag
-				#if mag > 100:
-					#output[i-1,j-1] = mag
 
 	#cv2.imwrite('sobel.jpg',output)
 	return (output,angles)
@@ -244,7 +231,10 @@ def sobeldet():
 	imgpath = 'nztowerds.jpg'
 	img = cv2.imread(imgpath)
 	img = sepblur(grayscale(img))
-	edges = sobel(img)[0]
+	det = sobel(img)
+	edges = det[0]
+	angles = det[1]
+	cv2.imwrite('angletest.jpg',nms(edges,angles))
 	#cv2.imwrite("exout.png",edges)
 
 def start():
