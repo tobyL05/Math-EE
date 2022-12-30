@@ -73,7 +73,10 @@ def sobel(gray_img):
 				for kc in range(3):
 					hori += horizontal[kr][kc] * gray_img[i-kr][j-kc]
 					vert += vertical[kr][kc] * gray_img[i-kr][j-kc]
-			angles[i-1,j-1] = np.rad2deg(np.arctan2(vert,hori))
+			angle = np.rad2deg(np.arctan2(vert,hori))
+			if angle < 0:
+				angle += 180
+			angles[i-1,j-1] = angle
 			output[i-1,j-1] = np.sqrt(np.square(hori) + np.square(vert))
 
 	#cv2.imwrite('sobel.jpg',output)
